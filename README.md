@@ -69,7 +69,7 @@ INSERT VISUALIZATIONS HERE
   
 ## Project Specific Requirements
 
-1. Find a problem worth soling, analyzing ,or visualizing
+1. Find a problem worth solving, analyzing ,or visualizing
 
 2. Use Machine Learning in the context of technologies learned in class.
 
