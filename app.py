@@ -8,9 +8,9 @@ import sys
 # Data Variables --------------------------------------------------
 app=Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
-app.config["MONGO_URI"]="mongodb://localhost:27017/DBNAMEHERE"
+app.config["MONGO_URI"]="mongodb://localhost:27017/vgpredict"
 mongo=PyMongo(app)
-variable = mongo.db.collection
+vg_data = mongo.db.vg_data
 
 
 # Frontend App Routes --------------------------------------------------
@@ -50,9 +50,9 @@ def nicoleDev():
 
 
 # Backend App Routes --------------------------------------------------
-@app.route("/data")
+@app.route("/vg_data")
 def serveData():
-    return jsonify(list(variable.find({ },
+    return jsonify(list(vg_data.find({ },
    { '_id': 0})))
 
 
