@@ -109,14 +109,19 @@ price_data_df['Median'] = np.where(price_data_df[['Price']] > median, True, Fals
 # Merge data
 merged_df = pd.merge(games_clean_df, price_data_df,  how='inner', left_on=['Name','Platform'], right_on = ['Game Title','Console'])
 merged_df = merged_df.fillna(0)
-# Export data to csv
-# merged_df.to_csv(r'..\data\merged_games_df.csv', encoding='utf-8', index=False)
+merged_df = merged_df.drop(columns=["Console","Game Title"])
+# Create List/Array of Genres
+genres_obj = merged_df["Genre"].unique()
+genres = []
+for i in genres_obj:
+    genres.append(i)
+
 # Combine into single dict for push to MongoDB
-# vgpredict_data = {merged_df}
 wip_dict = merged_df.to_dict("records")
 vgpredict_data = {}
-vgpredict_data["vg_data"] = (wip_dict)
 vgpredict_data["consoles"] = (console_col)
+vgpredict_data["genres"] = (genres)
+vgpredict_data["vg_data"] = (wip_dict)
 
 # Push merged dataframe to MongoDB
 conn = "mongodb://localhost:27017"
