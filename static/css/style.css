@@ -1,0 +1,8 @@
+table,thead,tbody{
+    text-align:center;
+    justify-content:center;
+    align-items:center;
+}
+th{
+    border:1px solid teal;
+}
