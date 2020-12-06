@@ -13,14 +13,35 @@ mongo=PyMongo(app)
 vg_data = mongo.db.vg_data
 
 
+
 # Frontend App Routes --------------------------------------------------
+app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+
+################## Main ##################
 @app.route("/")
 def index():
     return render_template(
         "index.html",
     )
 
+################## Games ##################
+@app.route('/game')
+def games():
+    return render_template('game.html')
 
+################## Predictions ##################
+@app.route('/predictions')
+def predictions():
+    return render_template('predictions.html')
+
+################## Data ##################
+@app.route('/data')
+def data():
+    return render_template('data.html')
+
+    
 # Temporary Dev Routes
 @app.route("/daren")
 def darenDev():
