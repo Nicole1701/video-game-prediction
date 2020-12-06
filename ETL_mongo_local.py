@@ -115,11 +115,17 @@ genres_obj = merged_df["Genre"].unique()
 genres = []
 for i in genres_obj:
     genres.append(i)
+# Create List/Array of Years
+years_obj = merged_df["Year"].unique()
+years = []
+for i in years_obj:
+    years.append(i.astype(str))
 
 # Combine into single dict for push to MongoDB
 wip_dict = merged_df.to_dict("records")
 vgpredict_data = {}
-vgpredict_data["consoles"] = (console_col)
+vgpredict_data["platforms"] = (console_col)
+vgpredict_data["years"] = (years)
 vgpredict_data["genres"] = (genres)
 vgpredict_data["vg_data"] = (wip_dict)
 
