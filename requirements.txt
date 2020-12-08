@@ -1,0 +1,28 @@
+# This file may be used to create an environment using:
+# $ conda create --name <env> python=3.6
+# $ pip install -r requirements.txt
+
+
+
+beautifulsoup4==4.9.3
+flask==1.1.2
+Flask-PyMongo==2.3.0
+google-colab==1.0.0
+joblib==0.17.0
+matplotlib==3.3.3
+missingno==0.4.2
+numpy==1.19.4
+pandas==0.24.0
+plotly==4.14.0
+psycopg2==2.8.6
+pymongo==3.11.2
+python-dateutil==2.8.1
+requests==2.21.0
+scipy==1.5.4
+seaborn==0.11.0
+scikit-learn==0.23.2
+lxml==4.6.2
+yellowbrick==1.2
+
+
+
