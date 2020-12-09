@@ -3,12 +3,13 @@ from flask_pymongo import PyMongo
 import pymongo
 import requests
 import sys
+import os
 
 
 # Data Variables --------------------------------------------------
 app=Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
-app.config["MONGO_URI"]="mongodb://localhost:27017/vgpredict"
+app.config["MONGO_URI"]=os.environ['MONGO_URI']
 mongo=PyMongo(app)
 vg_data = mongo.db.vg_data
 
