@@ -47,7 +47,7 @@ For the purposes of this project, we analyzed the data for the following platfor
 
 ### Web Scraper
 
-The scraper code is in the scrape_ETL.ipynb Jupyter Notebook file. On the first attempt, the price table for each console was scraped individually. Since that required human assistance to get the data, it was not going work for the end goal of dynamically updating the tables. After some trial and error, in three nested loops all the data was able to be scraped in to one table and exported to a CSV file.
+The scraper code is in the scrape_ETL.ipynb Jupyter Notebook file. On the first attempt, the price table for each platform was scraped individually. Since that required human assistance to get the data, it was not going work for the end goal of dynamically updating the tables. After some trial and error, in three nested loops all the data was able to be scraped in to one table and exported to a CSV file.
 
 The outer loop creates the URL to be scraped and uses Beautiful Soup to parse the HTML to find all the table rows in the HTML table tag. In the second loop looks at each table row element while the third loop finds all the table data and removes the HTML markup. After all the HTML table data is pulled from the page, it is made in to a table (data frame) and appended to a list. The best feature of this scraper is that in one simple Pandas function, pd.concat(), the list of “tables” makes one complete table of all the data. In the final step, the price is changed from a string type to a floating number, which is needed for analysis.
 
