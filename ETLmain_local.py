@@ -2,15 +2,24 @@
 import pandas as pd
 from bs4 import BeautifulSoup as bs
 import requests
+import json
 import numpy as np
 import scipy.stats as st
 import pymongo
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+from yellowbrick.classifier import ClassificationReport
+from yellowbrick.style.palettes import PALETTES, SEQUENCES, color_palette
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Main dictionary to push to MongoDB
 vg_project = {}
 
 #Embed all in function
-def etlfunction():
+def scrape_ETL():
 
     ### WEB SCRAPE ###
     # URLs to scrape
@@ -121,7 +130,7 @@ def etlfunction():
     # Merge data
     merged_df = pd.merge(games_clean_df, price_data_df,  how='inner', left_on=['Name','Platform'], right_on = ['Game Title','Console'])
     merged_df = merged_df.fillna(0)
-    merged_df = merged_df.drop(columns=["Console","Game Title"])
+    # merged_df = merged_df.drop(columns=["Console","Game Title"])
     # Convert to list/array and push to main dictionary
     merged_dict = merged_df.to_dict("records")
 
@@ -131,6 +140,29 @@ def etlfunction():
     for i in genres_obj:
         genres.append(i)
 
+    #Setup Encoded Data for Modelling
+    fill_zero = merged_df
+    # Change the floats to integers
+    fill_zero['NA_Sales'] = fill_zero['NA_Sales'].apply(np.int64)
+    fill_zero['EU_Sales'] = fill_zero['EU_Sales'].apply(np.int64)
+    fill_zero['JP_Sales'] = fill_zero['JP_Sales'].apply(np.int64)
+    fill_zero['Global_Sales'] = fill_zero['Global_Sales'].apply(np.int64)
+    fill_zero['Other_Sales'] = fill_zero['Other_Sales'].apply(np.int64)
+    fill_zero['Price'] = fill_zero['Price'].apply(np.int64)
+    # Label Encode the Platform and Genre columns
+    le = preprocessing.LabelEncoder()
+    le.fit(fill_zero["Platform"])
+    fill_zero["Platform"]= le.transform(fill_zero["Platform"])
+    le.fit(fill_zero["Genre"])
+    fill_zero["Genre"]= le.transform(fill_zero["Genre"])
+    encoded_df = fill_zero.rename(columns={"Platform": "Platform LabelCode", "Genre": "Genre LabelCode"})
+    platform_ohe = pd.get_dummies(encoded_df["Platform LabelCode"], prefix="Platform")
+    genre_ohe = pd.get_dummies(encoded_df["Genre LabelCode"], prefix="Genre")
+    pricesWithEncode = encoded_df.join(platform_ohe, how='left', sort=False)
+    pricesWithEncode2 = pricesWithEncode.join(genre_ohe, how='left', sort=False)
+    # Convert to list/array and push to main dictionary
+    encoded_dict = pricesWithEncode2.to_dict("records")
+
     # Assemble main dictionary
     vg_project["consoles"] = (console_col)
     vg_project["genres"] = (genres)
@@ -138,6 +170,7 @@ def etlfunction():
     vg_project["games_all_sales"] = (all_sales_dict)
     vg_project["games_filtered_sales"] = (filtered_sales_dict)
     vg_project["merged_data"] = (merged_dict)
+    vg_project["encoded_data"] = (encoded_dict)
     
 
     # Push main dictionary to MongoDB
@@ -148,4 +181,50 @@ def etlfunction():
     vg_data.drop()
     vg_data.insert_one(vg_project)
 
-etlfunction()
+
+def log_regression():
+    response = json.loads(requests.get("http://127.0.0.1:5000/vg_data").text)
+    data = response[0]["encoded_data"]
+    encoded_data = pd.DataFrame.from_dict(data)
+    encoded_data = encoded_data.drop(columns =['Platform_0', 'Platform_1',
+       'Platform_2', 'Platform_3', 'Platform_4', 'Platform_5', 'Platform_6',
+       'Platform_7', 'Genre_0', 'Genre_1', 'Genre_2', 'Genre_3', 'Genre_4',
+       'Genre_5', 'Genre_6', 'Genre_7', 'Genre_8', 'Genre_9', 'Genre_10',
+       'Genre_11',"Price", "Console", "Name", "Game Title", "Platform LabelCode", "Genre LabelCode", "Publisher"])
+    X_train, X_test, y_train, y_test = train_test_split(encoded_data.drop(["Mean"],axis=1), 
+                                                    encoded_data["Mean"], test_size=0.35, 
+                                                    random_state=42)
+    logmodel = LogisticRegression()
+    logmodel.fit(X_train,y_train)
+    predictions = logmodel.predict(X_test)
+    cl_report = classification_report(y_test,predictions)
+    matrix_array = confusion_matrix(y_test,predictions)
+    matrix_array_df = pd.DataFrame(matrix_array)
+    matrix_array_df = matrix_array_df.rename(index={0 : "False", 1 : "True"})
+    matrix_array_df = matrix_array_df.rename(columns={0 : "Correct \n Predictions", 1 : "Incorrect \n Predictions"})
+    matrix_array_df = matrix_array_df.reset_index()
+    matrix_array_df = matrix_array_df.rename(columns={"index" : "Above Avg Price"})
+    sns.set()
+    stack_plot = matrix_array_df.set_index('Above Avg Price').T.plot(kind='bar', 
+                stacked=True, color=["#0033FF", "#FF0099"], figsize=(16,9))
+    ylabel = "Total Predictions"
+    plt.ylabel(ylabel,fontsize="16")
+    plt.xticks(rotation=360, size="16")
+    plt.title("Game Price Prediction Accuracy", size="24")
+    plt.savefig("static/img/matrix_plot.png")
+    # Instantiate the classification model and visualizer
+    visualizer = ClassificationReport(logmodel, support=True, title="Logistic Regression Learning Model",
+                                    cmap='YlGnBu', size=(900, 500))
+    visualizer.fit(X_train, y_train)  # Fit the visualizer and the model
+    visualizer.score(X_test, y_test)  # Evaluate the model on the test data
+    visualizer.show(outpath="static/img/report_plot.png") # Draw/show the data
+
+
+
+
+
+
+
+# Call all functions on script run
+scrape_ETL()
+log_regression()
