@@ -14,13 +14,15 @@ from yellowbrick.classifier import ClassificationReport
 from yellowbrick.style.palettes import PALETTES, SEQUENCES, color_palette
 import matplotlib.pyplot as plt
 import seaborn as sns
+#%matplotlib inline
+import plotly.express as px
+import plotly.graph_objects as go
 
 # Main dictionary to push to MongoDB
 vg_project = {}
 
 #Embed all in function
 def scrape_ETL():
-
     ### WEB SCRAPE ###
     # URLs to scrape
     base_url = "https://gamevaluenow.com/"
@@ -220,11 +222,130 @@ def log_regression():
     visualizer.show(outpath="static/img/report_plot.png") # Draw/show the data
 
 
+def vintagedataviz():
+    response = json.loads(requests.get("http://127.0.0.1:5000/vg_data").text)
+    data = response[0]["merged_data"]
+    sales_df = pd.DataFrame.from_dict(data)
+    # create genre group by for genre viz
+    genres =sales_df.groupby("Genre", as_index=False).count()
+    genre_count = genres[["Genre", "Name"]].rename(columns={"Name": "Game Count"})
+    sorted_genre_count = genre_count.sort_values(by=["Game Count"], ascending=False)
+    # load in color palette, created in AllDataViz notebook
+    palette = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#ff8001', '#00fcfe', '#FE00FA', '#16FF32', '#FF97FF', 
+           '#FFFF00','#2dc997','#B10DA1']
+    # Bar Graph of top Genres
+    fig = px.bar(sorted_genre_count, title="Top Game Genres - vintage games", x="Genre", y="Game Count")
+    fig.show()
+    fig.write_html("static/img/vintagegenres.html")
+    # create genre by year table for viz
+    genre_year = sales_df.groupby(["Genre", "Year"], as_index=False).count()
+    genre_by_year = genre_year[["Genre", "Year", "Platform"]].rename(columns={"Platform": "Games per Genre"})
+    # stacked bar graph of genre by year
+    fig = px.bar(genre_by_year, title="Top Genres by Year", x="Year", y="Games per Genre", 
+             color="Genre", range_y=[0,250], color_discrete_sequence=palette)
+    # creating cumulative count of games per genre per year for bar chart race
+    genre_year =sales_df.groupby(["Genre","Year"]).agg({"Platform":"count"}).reset_index()
+    # genre_year
+    genre_by_year = genre_year[["Genre", "Year", "Platform"]].rename(columns={"Platform": "Games per Genre"})
+    # genre_by_year
+    idx = pd.MultiIndex.from_product([genre_by_year.Year.unique(), 
+                                    genre_by_year.Genre.unique()], names=['Year', 'Genre'])
+    genre_by_year2 = genre_by_year.set_index(['Year', 'Genre']).reindex(idx).fillna(0).sort_values(ascending=True,by=["Genre","Year"])
+    cumulative_genre_by_year = pd.concat([genre_by_year2, genre_by_year2.groupby(level=1).cumsum().add_prefix('Cumulative_')], 1).sort_index(level=1).reset_index()
+    cumulative_genre_by_year.sort_values(by=["Year","Genre"],inplace=True)
+    cumulative_genre_by_year.rename(columns={"Cumulative_Games per Genre":"Cumulative Games per Genre"},inplace=True)
+    # top genre over time bar chart race
+    fig = px.bar(cumulative_genre_by_year, title="Top Genres over Time-vintage", x="Genre", y="Cumulative Games per Genre", 
+             color="Genre", animation_frame="Year", animation_group="Genre", range_y=[0,260],
+             color_discrete_sequence=palette)
+    fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 300
+    # Create Sales info table for viz
+    sales_year = sales_df.groupby(["Year"], as_index=False).sum()
+    sales_by_year = sales_year[["Year","NA_Sales","EU_Sales", "JP_Sales", "Other_Sales","Global_Sales"]]
+    # global sales by year - export to HTML
+    fig = px.line(sales_by_year, title="Global Sales - 1980-2003", x="Year", y="Global_Sales")
+    fig.write_html("static/img/vintageglobalsales.html")
+    # comparison of sales by country by year
+    sales_by_year.plot(x="Year", y=["NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales"], kind="line")
+    # Groupby platform and year for platform viz
+    platform_and_year = sales_df.groupby(["Platform","Year"], as_index=False).count()
+    games_by_year = platform_and_year[["Platform", "Year", "Name"]].rename(columns={"Name": "Games per Platform"})
+    # games by platform by year - export to HTML
+    fig = px.bar(games_by_year, title="Top Platforms by Year", x="Year", y="Games per Platform", 
+                color="Platform", range_y=[0,250], color_discrete_sequence=palette)
+    fig.write_html("static/img/vintageplatforms.html")
+    # faceted platform bubble chart
+    fig = px.scatter(games_by_year, x="Year", y="Games per Platform",
+                size="Games per Platform", color="Year", facet_col="Platform")
+    # games per genre bubble chart
+    fig = px.scatter(genre_by_year, x="Genre", y="Games per Genre",
+                size="Games per Genre", color="Year")
 
 
-
+def alldataviz():
+    response = json.loads(requests.get("http://127.0.0.1:5000/vg_data").text)
+    data = response[0]["games_all_sales"]
+    all_sales_df = pd.DataFrame.from_dict(data)
+    clean_all_sales = all_sales_df.drop(all_sales_df[all_sales_df.Year > 2016].index)
+    all_sales_year = clean_all_sales.groupby(["Year"], as_index=False).sum()
+    all_sales_by_year = all_sales_year[["Year","NA_Sales","EU_Sales", "JP_Sales", "Other_Sales","Global_Sales"]]
+    fig = px.colors.qualitative.swatches()
+    # create color palette
+    palette = ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#ff8001', '#00fcfe', '#FE00FA', '#16FF32', '#FF97FF', 
+            '#FFFF00','#2dc997','#B10DA1']
+    # global sales by year - export to HTML
+    fig = px.line(all_sales_by_year, title="Global Sales - all data", x="Year", y="Global_Sales")
+    fig.write_html("static/img/allglobalsales.html")
+    # comparison of sales by country by year
+    all_sales_by_year.plot(x="Year", y=["NA_Sales", "EU_Sales", "JP_Sales", "Other_Sales"], kind="line")
+    # create genre group by for genre viz
+    genres =clean_all_sales.groupby("Genre", as_index=False).count()
+    genre_count = genres[["Genre", "Name"]].rename(columns={"Name": "Game Count"})
+    sorted_genre_count = genre_count.sort_values(by=["Game Count"], ascending=False)
+    # Bar Graph of top Genres
+    fig = px.bar(sorted_genre_count, title="Top Game Genres - all data", x="Genre", y="Game Count")
+    fig.write_html("static/img/alltopgenres.html")
+    # create genre by year table for viz
+    genre_year = clean_all_sales.groupby(["Genre", "Year"], as_index=False).count()
+    genre_by_year = genre_year[["Genre", "Year", "Platform"]].rename(columns={"Platform": "Games per Genre"})
+    # stacked bar graph of genre by year
+    fig = px.bar(genre_by_year, title="Top Genres by Year", x="Year", y="Games per Genre", 
+                color="Genre", range_y=[0,1600], color_discrete_sequence=palette)
+    # creating cumulative count of games per genre per year for bar chart race
+    genre_year =clean_all_sales.groupby(["Genre","Year"]).agg({"Platform":"count"}).reset_index()
+    # genre_year
+    genre_by_year = genre_year[["Genre", "Year", "Platform"]].rename(columns={"Platform": "Games per Genre"})
+    # genre_by_year
+    idx = pd.MultiIndex.from_product([genre_by_year.Year.unique(), 
+                                    genre_by_year.Genre.unique()], names=['Year', 'Genre'])
+    genre_by_year2 = genre_by_year.set_index(['Year', 'Genre']).reindex(idx).fillna(0).sort_values(ascending=True,by=["Genre","Year"])
+    cumulative_genre_by_year = pd.concat([genre_by_year2, genre_by_year2.groupby(level=1).cumsum().add_prefix('Cumulative_')], 1).sort_index(level=1).reset_index()
+    cumulative_genre_by_year.sort_values(by=["Year","Genre"],inplace=True)
+    cumulative_genre_by_year.rename(columns={"Cumulative_Games per Genre":"Cumulative Games per Genre"},inplace=True)
+    # top genre over time bar chart race
+    fig = px.bar(cumulative_genre_by_year, title="Top Genres over Time", x="Genre", y="Cumulative Games per Genre", 
+                color="Genre", animation_frame="Year", animation_group="Genre", range_y=[0,3500],
+                color_discrete_sequence=palette)
+    fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 300
+    fig.show()
+    fig.write_html("static/img/allgenresovertime.html")
+    # Bubble chart of genre by year
+    fig = px.scatter(genre_by_year, title="Top Genres by Year", x="Year", y="Games per Genre", 
+                size="Games per Genre", color="Genre", range_y=[0,300],
+                color_discrete_sequence=palette)
+    # group data by platform and year for platform viz
+    platform_and_year = clean_all_sales.groupby(["Platform","Year"], as_index=False).count()
+    games_by_year = platform_and_year[["Platform", "Year", "Name"]].rename(columns={"Name": "Games per Platform"})
+    # games by platform by year - export to HTML
+    fig = px.bar(games_by_year, title="Top Platforms by Year", x="Year", y="Games per Platform", 
+                color="Platform", range_y=[0,1500],color_discrete_sequence=palette)
+    # a different look at games per genre
+    fig = px.scatter(genre_by_year, x="Games per Genre", y="Year",
+                    size="Games per Genre", color="Genre", color_discrete_sequence=palette)
 
 
 # Call all functions on script run
-scrape_ETL()
-log_regression()
+#scrape_ETL()
+#log_regression()
+vintagedataviz()
+alldataviz()
