@@ -1,4 +1,4 @@
-Year,NA_Sales,EU_Sales,JP_Sales,Other_Sales,Global_Sales,Price,Platform_0,Platform_1,Platform_2,Platform_3,Platform_4,Platform_5,Platform_6,Platform_7,Genre_0,Genre_1,Genre_2,Genre_3,Genre_4,Genre_5,Genre_6,Genre_7,Genre_8,Genre_9,Genre_10,Genre_11,Price_bin_custom_range,Price_bin_custom_label
+Year,NA_Sales,EU_Sales,JP_Sales,Other_Sales,Global_Sales,Price,2600,Gen,N64,NES,PS,SAT,SCD,SNES,Action,Adventure,Fighting,Misc,Platform,Puzzle,Racing,Role-Playing,Shooter,Simulation,Sports,Strategy,Price_bin_custom_range,Price_bin_custom_label
 1981,630000,30000,0,10000,670000,16,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,"(10, 20]",2
 1981,360000,20000,0,0,390000,17,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,"(10, 20]",2
 1981,740000,40000,0,10000,790000,61,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,"(40, 80]",4
