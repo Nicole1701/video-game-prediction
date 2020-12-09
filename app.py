@@ -17,6 +17,7 @@ vg_data = mongo.db.vg_data
 # Frontend App Routes --------------------------------------------------
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['JSON_SORT_KEYS'] = False
 
 
 ################## Main ##################
@@ -58,6 +59,7 @@ def johnnyDev():
     return render_template(
         "johnny.html",
     )
+
 @app.route("/michelle")
 def michelleDev():
     return render_template(
