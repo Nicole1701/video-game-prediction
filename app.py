@@ -9,6 +9,7 @@ import os
 # Data Variables --------------------------------------------------
 app=Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
+#app.config["MONGO_URI"]="mongodb://localhost:27017/vgpredict"
 app.config["MONGO_URI"]=os.environ['MONGO_URI']
 mongo=PyMongo(app)
 vg_data = mongo.db.vg_data
@@ -18,6 +19,7 @@ vg_data = mongo.db.vg_data
 # Frontend App Routes --------------------------------------------------
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['JSON_SORT_KEYS'] = False
 
 
 ################## Main ##################
@@ -59,6 +61,7 @@ def johnnyDev():
     return render_template(
         "johnny.html",
     )
+
 @app.route("/michelle")
 def michelleDev():
     return render_template(
