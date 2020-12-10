@@ -57,7 +57,7 @@ The outer loop creates the URL to be scraped and uses Beautiful Soup to parse th
 
 ### Data Cleaning
 
-The data cleaning can be found in the [datacleaning.ipynb file](https://github.com/Nicole1701/video-game-prediction/blob/main/notebooks/datacleaning.ipynb). First the [Video Game Sales csv](https://github.com/Nicole1701/video-game-prediction/blob/main/data/vgsales.csv) was pulled in filtered for only the platforms we wanted to look at and then cleaned for any records with blank year. Next, the sales numbers were turned into currency so it could be analyzed and then, in order to make the join with the scraped file easier, all game names were put in upper case and any punctuation removed.
+The data cleaning can be found in the [datacleaning.ipynb file](https://github.com/Nicole1701/video-game-prediction/blob/main/notebooks/datacleaning.ipynb). First the [Video Game Sales csv](https://github.com/Nicole1701/video-game-prediction/blob/main/data/vgsales.csv) was pulled in filtered for only the platforms we wanted to look at and then cleaned for any records with blank year. Next, the sales numbers were turned into units so it could be analyzed and then, in order to make the join with the scraped file easier, all game names were put in upper case and any punctuation removed.
 
 A similar cleaning process was used on the scraped data, along with removing any outliers from the Price column. In addition, two columns were added: Mean & Median which indicated if a game's price on the secondary market was above or below the mean/median. Once the files were cleaned, they were merged based on Game Title and Platform, leaving 1,283 records to analyze.
 
