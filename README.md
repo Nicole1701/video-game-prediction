@@ -18,7 +18,7 @@
 
 ## Are Retro Game Profits in the Secondary Market Predictable?
 
-In 1977, Atari released the Atari 2600, a gaming console that featured not only a joystick control, but also game cartridges which allowed users to play multiple games on one system, effectively launching a new era in video games and spawning such classics as Space Invaders and Pac Man. By 1985, Nintendo entertainment System (NES) found it's way to the US markets and put out such hits as Super Mario Brothers and The Legend of Zelda.
+In 1977, Atari released the Atari 2600, a gaming console that featured not only a joystick control, but also game cartridges which allowed users to play multiple games on one system, effectively launching a new era in video games and spawning such classics as Space Invaders and Pac Man. By 1985, Nintendo Entertainment System (NES) found its way to the US markets and put out such hits as Super Mario Brothers and The Legend of Zelda.
 
 Throughout the 1980's and 1990's, other popular consoles were put on the market, each offering their own collection of games and appealing to a variety of players and playstyles. Some of these games sold very well and are synonymous with the era, while others barely made a profit.
 
@@ -59,7 +59,7 @@ The outer loop creates the URL to be scraped and uses Beautiful Soup to parse th
 
 The data cleaning can be found in the [datacleaning.ipynb file](https://github.com/Nicole1701/video-game-prediction/blob/main/notebooks/datacleaning.ipynb). First the [Video Game Sales csv](https://github.com/Nicole1701/video-game-prediction/blob/main/data/vgsales.csv) was pulled in filtered for only the platforms we wanted to look at and then cleaned for any records with blank year. Next, the sales numbers were turned into currency so it could be analyzed and then, in order to make the join with the scraped file easier, all game names were put in upper case and any punctuation removed.
 
-A similar cleaning process was used on the scraped data, along with removing any outliers from the Price column. In addition, two columns were added: Mean & Median which indicated if a game's price on the secondary market was above or below the mean/median. Once the files were cleaned, they were merged based on Game Title and Platform, leaving 1,23 records to analyze.
+A similar cleaning process was used on the scraped data, along with removing any outliers from the Price column. In addition, two columns were added: Mean & Median which indicated if a game's price on the secondary market was above or below the mean/median. Once the files were cleaned, they were merged based on Game Title and Platform, leaving 1,283 records to analyze.
 
 <hr>
 
@@ -110,7 +110,9 @@ A similar cleaning process was used on the scraped data, along with removing any
  -   F1-Score can be interpreted as a weighted harmonic mean of the precision and recall, where an F1-Score reaches its best value at 1 and worst score at 0.
  -   Support is the number of occurrences of each class. In this case, how many instances of False and True were predicted.
 </p>
+
 ![Random Forest Feature Importance](images/random-forest.PNG)
+
 <p>
  - Using the binned price column as the dependent variable.
  -   The overall accuracy of this machine learning model is 45% using five bins for 1151 unique price values.
@@ -119,7 +121,9 @@ A similar cleaning process was used on the scraped data, along with removing any
  -   Finally with 5 bins at 45%
  -   The chart above shows the feature importance order of the model
 </p>
+
 ![Classification Matrix](images/confusion-matrix.PNG)
+
 <p>A confusion matrix provides a summary of the predictive results in a classification problem.</p>
 <hr>
 
