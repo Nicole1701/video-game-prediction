@@ -26,7 +26,7 @@ These retro consoles are no longer sold, however, they have found a life in seco
 
 ## Direct Link
 
-[Retro Gaming Wesite](https://video-game-prediction.herokuapp.com/data)
+[Retro Gaming Wesite](https://video-game-prediction.herokuapp.com/)
 
 ## Data Sources
 
