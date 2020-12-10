@@ -78,19 +78,19 @@ A similar cleaning process was used on the scraped data, along with removing any
 
 ![Global Sales](images/global-sales.PNG)
 
-<p>**The years and platforms that we used for our machine learning model hit peak global sales in 1998 at $177M. In the complete data set, you will see a peak of nearly three times that amount as the number of platforms and games expands.**</p>
+<p>The years and platforms that we used for our machine learning model hit peak global sales in 1998 at $177M. In the complete data set, you will see a peak of nearly three times that amount as the number of platforms and games expands.</p>
 
 ![Top Genres](images/top-genres.PNG)
 
-<p>**By viewing the bar chart race you will see that the numbers of games and genres stays relatively low until around 2000 when the pace of growth speeds up and there is rapid growth in each category.**</p>
+<p>By viewing the bar chart race you will see that the numbers of games and genres stays relatively low until around 2000 when the pace of growth speeds up and there is rapid growth in each category.</p>
 
 ![Genre Comparison](images/genre-comparison.PNG)
 
-<p>**In this comparison, you can see that the top genres in the full data set and the vintage data set show that top two genres are Action and Sports but racing eventually gets replaced with Adventure, Shooter, and Role Playing games in popularity.**</p>
+<p>In this comparison, you can see that the top genres in the full data set and the vintage data set show that top two genres are Action and Sports but racing eventually gets replaced with Adventure, Shooter, and Role Playing games in popularity.</p>
 
 ![Platforms by Year](images/platforms.PNG)
 
-<p>**This chart gives context to the vintage game data set by showing the number of platforms available in a given year and active years for each platform.**</p>
+<p>This chart gives context to the vintage game data set by showing the number of platforms available in a given year and active years for each platform.</p>
 
 ### Prediction Analysis
 
@@ -98,29 +98,29 @@ A similar cleaning process was used on the scraped data, along with removing any
 
 ![Prediction Results](images/prediction-results.PNG)
 
-<p>**The categories False and True indicate if the game price is above (True) the average price of all the games in the data set. Of the 311 game price values that are below the average price, 295 were predicted correctly and 16 incorrectly. For the 138 prices that were above the overall average, 109 were predicted correctly and 30 were not.**</p>
+<p>The categories False and True indicate if the game price is above (True) the average price of all the games in the data set. Of the 311 game price values that are below the average price, 295 were predicted correctly and 16 incorrectly. For the 138 prices that were above the overall average, 109 were predicted correctly and 30 were not.</p>
 
 ![Classification Report](images/classification-report.PNG)
 
 <p>
- **- Using 35% of the data for testing gave us the best average of precision and recall as well as accuracy.  
+ - Using 35% of the data for testing gave us the best average of precision and recall as well as accuracy.  
  -   The overall accuracy of this machine learning model is 72%.
  -   Precision is intuitively the ability of the classifier not to label as positive a sample that is negative.
  -   Recall is intuitively the ability of the classifier to find all the positive samples.
  -   F1-Score can be interpreted as a weighted harmonic mean of the precision and recall, where an F1-Score reaches its best value at 1 and worst score at 0.
- -   Support is the number of occurrences of each class. In this case, how many instances of False and True were predicted.**
+ -   Support is the number of occurrences of each class. In this case, how many instances of False and True were predicted.
 </p>
 ![Random Forest Feature Importance](images/random-forest.PNG)
 <p>
- **- Using the binned price column as the dependent variable.
+ - Using the binned price column as the dependent variable.
  -   The overall accuracy of this machine learning model is 45% using five bins for 1151 unique price values.
  -   We first ran the model on the price column as the "y" value with no bins at 2 % success rate
  -   Next ran the model on the price column with 10 bins at 23% and then seven bins at 35%.
  -   Finally with 5 bins at 45%
- -   The chart above shows the feature importance order of the model**
+ -   The chart above shows the feature importance order of the model
 </p>
 ![Classification Matrix](images/confusion-matrix.PNG)
-<p>**A confusion matrix provides a summary of the predictive results in a classification problem**.</p>
+<p>A confusion matrix provides a summary of the predictive results in a classification problem.</p>
 <hr>
 
 ## Project Specific Requirements
